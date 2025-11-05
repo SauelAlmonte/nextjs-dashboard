@@ -28,6 +28,10 @@ yarn-error.log*
 .env*.local
 .env
 
+# IDE's
+.idea/
+.vscode/
+
 # vercel
 .vercel
 
