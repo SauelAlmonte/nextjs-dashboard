@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import postgres from 'postgres';
-// import { invoices, customers, revenue, users } from '../lib/placeholder-data';
+import { invoices, customers, revenue, users } from '../lib/placeholder-data';
 
 const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
 
@@ -16,14 +16,57 @@ async function seedUsers() {
   `;
 
     const insertedUsers = await Promise.all(
-        users.map(async (user) => {
-            const hashedPassword = await bcrypt.hash(user.password, 10);
-            return sql`
+        users.map(
+            async (user: {
+                password: string | Buffer<ArrayBufferLike>;
+                id:
+                    | string
+                    | number
+                    | boolean
+                    | Date
+                    | Uint8Array<ArrayBufferLike>
+                    | postgres.Helper<any, any[]>
+                    | postgres.Parameter<any>
+                    | postgres.ArrayParameter<readonly any[]>
+                    | readonly postgres.SerializableParameter<never>[]
+                    | postgres.Fragment
+                    | postgres.Fragment[]
+                    | null;
+                name:
+                    | string
+                    | number
+                    | boolean
+                    | Date
+                    | Uint8Array<ArrayBufferLike>
+                    | postgres.Helper<any, any[]>
+                    | postgres.Parameter<any>
+                    | postgres.ArrayParameter<readonly any[]>
+                    | readonly postgres.SerializableParameter<never>[]
+                    | postgres.Fragment
+                    | postgres.Fragment[]
+                    | null;
+                email:
+                    | string
+                    | number
+                    | boolean
+                    | Date
+                    | Uint8Array<ArrayBufferLike>
+                    | postgres.Helper<any, any[]>
+                    | postgres.Parameter<any>
+                    | postgres.ArrayParameter<readonly any[]>
+                    | readonly postgres.SerializableParameter<never>[]
+                    | postgres.Fragment
+                    | postgres.Fragment[]
+                    | null;
+            }) => {
+                const hashedPassword = await bcrypt.hash(user.password, 10);
+                return sql`
         INSERT INTO users (id, name, email, password)
         VALUES (${user.id}, ${user.name}, ${user.email}, ${hashedPassword})
         ON CONFLICT (id) DO NOTHING;
       `;
-        })
+            }
+        )
     );
 
     return insertedUsers;
